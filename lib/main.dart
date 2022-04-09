@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:money_management_app/models/category/category_model.dart';
 
 import 'screens/home/screen_home.dart';
 
-void main() {
+void main() async {
+  Hive.initFlutter();
+  if (!Hive.isAdapterRegistered(CategoryModelAdapter().typeId)) {
+    Hive.registerAdapter(CategoryModelAdapter());
+  }
+  if (!Hive.isAdapterRegistered(CategoryTypeAdapter().typeId)) {
+    Hive.registerAdapter(CategoryTypeAdapter());
+  }
   runApp(const MyApp());
 }
 
@@ -15,7 +24,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the
