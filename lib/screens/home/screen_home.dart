@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:money_management_app/db/category/category_db.dart';
-import 'package:money_management_app/models/category/category_model.dart';
 import 'package:money_management_app/screens/category/screen_category.dart';
 import 'package:money_management_app/screens/home/widgets/bottom_navigation.dart';
 import 'package:money_management_app/screens/transaction/screen_transcation.dart';
 
 import '../category/add_catogory_popup.dart';
+import '../transaction/screen_add_transaction/add_transaction.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -30,8 +30,9 @@ class MyHomePage extends StatelessWidget {
           onPressed: () {
             if (index == 0) {
               print("Add Transaction ");
+              Navigator.of(context).pushNamed(ScreenAddTransaction.route);
             } else if (index == 1) {
-              print("add Category");
+              // print("add Category");
               CategoryDb().refreshData();
               addCatogoryPopup(context);
               // final my_db = CategoryDb();

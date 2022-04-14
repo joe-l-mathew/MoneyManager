@@ -14,6 +14,7 @@ abstract class CategoryDbFuncytions {
 }
 
 class CategoryDb implements CategoryDbFuncytions {
+
   CategoryDb._internal();
   static final CategoryDb instance = CategoryDb._internal();
   factory CategoryDb() {
