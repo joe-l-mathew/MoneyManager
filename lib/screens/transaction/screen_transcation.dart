@@ -1,25 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:money_management_app/models/category/category_model.dart';
+
+import '../../db/transaction/transaction_db.dart';
+import '../../models/transcation/transaction_model.dart';
+import 'package:intl/intl.dart';
 
 class ScreenTransaction extends StatelessWidget {
   const ScreenTransaction({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemBuilder: ((context, index) => ListTile(
-            title: Text("Rs 100000"),
-            leading: CircleAvatar(
-                radius: 50,
-                child: Text(
-                  "12 \n Dec",
-                  textAlign: TextAlign.center,
+    TransactionDb.instance.getTrancasction();
+    return ValueListenableBuilder(
+        valueListenable: transactionList,
+        builder: (context, List<TransactionModel> myList, _) {
+          return ListView.separated(
+            itemBuilder: ((context, index) => ListTile(
+                  tileColor: myList[index].type == CategoryType.income
+                      ? Colors.red[100]
+                      : Colors.green[200],
+                  title: Text(myList[index].amount.toString()),
+                  leading: CircleAvatar(
+                      radius: 50,
+                      child: Text(
+                        myList[index].date,
+                        textAlign: TextAlign.center,
+                      )),
+                  trailing: IconButton(
+                    onPressed: () {
+                      onDelete(myList[index].id!);
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                  ),
+                  subtitle: Text(myList[index].purpose),
                 )),
-            subtitle: Text("Travel"),
-          )),
-      itemCount: 10,
-      separatorBuilder: ((context, index) => SizedBox(
-            height: 10,
-          )),
-    );
+            itemCount: myList.length,
+            separatorBuilder: ((context, index) => SizedBox(
+                  height: 10,
+                )),
+          );
+        });
+  }
+
+  onDelete(int id) {
+    TransactionDb.instance.onDelete(id);
   }
 }

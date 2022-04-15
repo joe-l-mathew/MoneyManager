@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_management_app/db/category/category_db.dart';
 import 'package:money_management_app/models/category/category_model.dart';
+import 'package:money_management_app/models/transcation/transaction_model.dart';
 import 'package:money_management_app/screens/transaction/screen_add_transaction/selectCategorytype.dart';
 
 import '../../../db/transaction/transaction_db.dart';
@@ -23,6 +24,7 @@ class _ScreenAddTransactionState extends State<ScreenAddTransaction> {
     super.initState();
   }
 
+  late CategoryModel addTransactionCategoryModel;
   final _purposeController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? selectedDate;
@@ -37,16 +39,16 @@ class _ScreenAddTransactionState extends State<ScreenAddTransaction> {
           children: [
             TextFormField(
               controller: _purposeController,
-              decoration:const InputDecoration(
+              decoration: const InputDecoration(
                   hintText: "Purpose", border: OutlineInputBorder()),
             ),
-           const SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: _amountController,
-              decoration:const InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Amount",
               ),
@@ -128,25 +130,73 @@ class _ScreenAddTransactionState extends State<ScreenAddTransaction> {
                 onChanged: (e) {
                   setState(() {
                     dropdownValue = e;
+                    print(e);
                   });
                 },
                 items: selectedCategory.value == CategoryType.income
                     ? CategoryDb()
                         .incomeListNotifier
                         .value
-                        .map((e) =>
-                            DropdownMenuItem(value: e.id, child: Text(e.name)))
+                        .map((e) => DropdownMenuItem(
+                            onTap: () {
+                              addTransactionCategoryModel = e;
+                              print(e);
+                            },
+                            value: e.id,
+                            child: Text(e.name)))
                         .toList()
                     : CategoryDb()
                         .expenceListNotifier
                         .value
-                        .map((e) =>
-                            DropdownMenuItem(value: e.id, child: Text(e.name)))
+                        .map((e) => DropdownMenuItem(
+                            onTap: () {
+                              addTransactionCategoryModel = e;
+                              print(e);
+                            },
+                            value: e.id,
+                            child: Text(e.name)))
                         .toList()),
-            ElevatedButton(onPressed: () {}, child: Text("Submit"))
+            ElevatedButton(
+                onPressed: () {
+                  addTransaction(context);
+                  print('clicked');
+                },
+                child: Text("Submit"))
           ],
         ),
       )),
     );
+  }
+
+  addTransaction(BuildContext ctx) {
+    print('recived');
+    if (_purposeController.text.isEmpty || _amountController.text.isEmpty) {
+      return;
+    }
+    print('firstReturen');
+    // if (selectedDate == null) {
+    //   return;
+    // }
+    if (addTransactionCategoryModel == null) {
+      print('null');
+      return;
+    }
+    print('Second return');
+    print('initialized');
+    if (selectedDate == null) {
+      selectedDate = DateTime.now();
+    }
+    // var text = '${selectedDate!.year}-$month-$day ${now.hour}:${now.minute}';
+    String date = "${selectedDate!.day} \n ${selectedDate!.month}";
+    final intAmount = int.tryParse(_amountController.text);
+    TransactionModel model = TransactionModel(
+        date: date,
+        purpose: _purposeController.text,
+        amount: intAmount!,
+        type: selectedCategory.value,
+        model: addTransactionCategoryModel);
+    TransactionDb.instance.addTransaction(model);
+    TransactionDb.instance.getTrancasction();
+    Navigator.pop(ctx);
   }
 }
