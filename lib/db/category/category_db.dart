@@ -14,7 +14,6 @@ abstract class CategoryDbFuncytions {
 }
 
 class CategoryDb implements CategoryDbFuncytions {
-
   CategoryDb._internal();
   static final CategoryDb instance = CategoryDb._internal();
   factory CategoryDb() {
@@ -57,6 +56,9 @@ class CategoryDb implements CategoryDbFuncytions {
   @override
   Future<void> onDelete(int id) async {
     final category_db = await Hive.openBox<CategoryModel>(CATEGPRYDBNAME);
+    // CategoryModel recivedVal = category_db.get(id)!;
+    // recivedVal.isDeleted = true;
+    // await category_db.put(id, recivedVal);
     await category_db.delete(id);
     refreshData();
     expenceListNotifier.notifyListeners();

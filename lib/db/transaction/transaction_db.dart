@@ -37,6 +37,9 @@ class TransactionDb implements TransactionDbFunctions {
   Future<void> getTrancasction() async {
     final db = await Hive.openBox<TransactionModel>(TRANSACTION_DB_NAME);
     transactionList.value = db.values.toList();
+    transactionList.value.sort(
+      (a, b) => b.date.compareTo(a.date),
+    );
   }
 
   @override
